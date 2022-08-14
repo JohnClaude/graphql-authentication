@@ -12,7 +12,8 @@ const schema = require('./schema/schema');
 const app = express();
 
 // Replace with your mongoLab URI
-const MONGO_URI = '';
+const MONGO_URI = 'mongodb+srv://john:V6Ws7mBs0ogiMZay@cluster0.ituhpyf.mongodb.net/?retryWrites=true&w=majority';
+// const MONGO_URI = 'mongodb://john:V6Ws7mBs0ogiMZay@ac-2pehcgq-shard-00-00.ituhpyf.mongodb.net:27017,ac-2pehcgq-shard-00-01.ituhpyf.mongodb.net:27017,ac-2pehcgq-shard-00-02.ituhpyf.mongodb.net:27017/?ssl=true&replicaSet=atlas-1j1ja4-shard-0&authSource=admin&retryWrites=true&w=majority';
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
 mongoose.Promise = global.Promise;
@@ -29,14 +30,17 @@ mongoose.connection
 // the cookie and modifies the request object to indicate which user made the request
 // The cookie itself only contains the id of a session; more data about the session
 // is stored inside of MongoDB.
+app.set('trust proxy', 1) // trust first proxy
+
 app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: 'aaabbbccc',
   store: new MongoStore({
     url: MONGO_URI,
-    autoReconnect: true
-  })
+    autoReconnect: true,
+  }),
+  cookie: { secure: true }
 }));
 
 // Passport is wired into express as a middleware. When a request comes in,
